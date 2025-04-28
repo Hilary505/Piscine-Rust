@@ -1,18 +1,13 @@
 use std::collections::HashMap;
 
- pub fn counting_words(words: &str) -> HashMap<String, u32> {
-    let mut word = HashMap::new();
-    for w in words.split_whitespace() {
-        let processed_word = w 
+pub fn counting_words(words: &str) -> HashMap<String, u32> {
+    words
         .to_lowercase()
-        .chars()
-        .filter(|c| c.is_alphanumeric() || *c == '\'')
-        .collect::<String>();
-
-        if !processed_word.is_empty() {
-            *word.entry(processed_word).or_insert(0) += 1;
-        }
-    }
-    word
+        .split(|c: char| !c.is_alphanumeric() && c != '\'')
+        .map(|w| w.trim_matches('\''))
+        .filter(|w| !w.is_empty())
+        .fold(HashMap::new(), |mut map, w| {
+            *map.entry(String::from(w)).or_default() += 1;
+            map
+        })
 }
-
